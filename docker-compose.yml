@@ -1,0 +1,26 @@
+
+services:
+  frontend:
+    build:
+      context: ./frontend/react-app 
+    ports:
+      - "5173:5173" 
+    env_file:
+      - ./frontend/react-app/.env    # Load environment variables from .env
+    networks:
+      - react-test
+   
+
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "5050:5050"
+    env_file:
+      - ./backend/.env      
+    networks:
+      - react-test
+
+networks:
+  react-test:
+    

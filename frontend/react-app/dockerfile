@@ -1,0 +1,36 @@
+# Stage 1: Build the application
+FROM node:18 AS frontend-builder
+
+# Set the working directory in the container
+WORKDIR /node
+
+# Install necessary build tools and libraries
+RUN apt-get update && apt-get install -y build-essential
+
+# Copy package.json 
+COPY package*.json ./
+
+# Install dependencies with --legacy-peer-deps
+RUN npm install --legacy-peer-deps
+
+# Install additional dependencies if needed
+RUN npm install react-chat-widget --legacy-peer-deps
+
+# Copy the rest of the application code
+COPY . .
+
+# Stage 2: Production image
+FROM node:18-slim
+
+# Set the working directory in the container
+WORKDIR /node
+
+
+# Copy only the necessary files from the build stage
+COPY --from=frontend-builder /node .
+
+# Expose the port the app will run on
+EXPOSE 5173
+
+# Define the command to run the app (assuming it's a production-ready script)
+CMD ["npm", "run", "dev"]

@@ -1,0 +1,26 @@
+# Use Node.js LTS as the base image
+FROM node:latest AS backend-builder
+
+# Set the working directory in the container
+WORKDIR /node
+
+# Copy package.json and package-lock.json
+COPY package.json* ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the application code
+COPY . .
+
+FROM node:18-slim
+
+WORKDIR /node
+
+COPY --from=backend-builder /node .
+
+# Expose the port 
+EXPOSE 5050
+
+# Define the command to run the app
+CMD ["npm", "start"]
